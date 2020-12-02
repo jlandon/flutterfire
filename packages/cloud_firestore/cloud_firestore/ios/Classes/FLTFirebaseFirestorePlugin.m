@@ -53,13 +53,16 @@ NSString *const kFLTFirebaseFirestoreChannelName = @"plugins.flutter.io/firebase
                                                       codecWithReaderWriter:firestoreReaderWriter]];
 
   FLTFirebaseFirestorePlugin *instance = [FLTFirebaseFirestorePlugin sharedInstance];
-  instance.channel = channel;
-  [registrar addMethodCallDelegate:instance channel:channel];
-#if TARGET_OS_OSX
-// TODO(Salakar): Publish does not exist on MacOS version of FlutterPluginRegistrar.
-#else
-  [registrar publish:instance];
-#endif
+    if (!instance.channel) {
+        instance.channel = channel;
+        [registrar addMethodCallDelegate:instance channel:channel];
+        
+        #if TARGET_OS_OSX
+        // TODO(Salakar): Publish does not exist on MacOS version of FlutterPluginRegistrar.
+        #else
+          [registrar publish:instance];
+        #endif
+    }
 }
 
 - (void)cleanupWithCompletion:(void (^)(void))completion {
