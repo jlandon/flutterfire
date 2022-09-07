@@ -158,7 +158,12 @@ FlutterStandardMethodCodec *_codec;
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self cleanupWithCompletion:nil];
+  // https://github.com/firebase/flutterfire/issues/6155#issuecomment-846528546
+  @try {
+    [self cleanupWithCompletion:nil];
+  }
+  @catch (NSException * e) {}
+  @finally {}
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)flutterResult {
